@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="folio.port.mapper.VariousMapper_c">
+
+<!-- [FAQ 데이터 출력] -->
+<select id="faqList" resultType="folio.port.domain.faqDAO">
+	select * from r_admin_faq
+</select>
+<!-- [공지사항 출력] -->
+<select id="noticeList" resultType="folio.port.domain.noticeDAO">
+	select * from r_admin_notice
+</select>
+<select id="notice_select_pg" resultType="folio.port.domain.noticeDAO">
+	select * from r_admin_notice order by nidx desc limit #{pg},10	
+</select>
+<select id="notice_select_search_pg" parameterType="java.util.Map"  resultType="folio.port.domain.noticeDAO">
+	select * from r_admin_notice where ncontent like concat('%',#{search}, '%') order by nidx desc limit #{page},10	
+</select>
+<select id="notice_select_search" resultType="folio.port.domain.noticeDAO">
+	select * from r_admin_notice where ncontent like concat('%',#{search}, '%') order by nidx desc
+</select>
+<!-- [단일 공지사항 출력] -->
+<select id="getNotice" resultType="folio.port.domain.noticeDAO">
+	select * from r_admin_notice where nidx=#{a}
+</select>
+<!-- [공지사항 조회수 카운팅] -->
+<update id="updateNotice_cnt">
+	update r_admin_notice set ncnt = ncnt+1 where nidx=#{a}
+</update>
+
+</mapper>

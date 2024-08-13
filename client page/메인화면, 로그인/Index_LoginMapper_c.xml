@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="folio.port.mapper.Index_LoginMapper_c">
+
+<!-- [회원가입] -->
+<insert id="insert">
+		insert into r_client_customer(cidx,cname,cid,auth,cpwd,ctel,cemail,cadrr_n,cadrr_1,cadrr_2,cad,cdate,approval)
+		values('0',#{cname},#{cid},'ROLE_CUSTOMER',#{cpwd},#{ctel},#{cemail},#{cadrr_n},#{cadrr_1},#{cadrr_2},#{cad},now(),'Y')
+</insert>
+
+<!-- [로그인 처리] -->
+<select id="read" resultType="folio.port.domain.customerDAO">
+	select cidx, cid,cpwd, auth, cname,ctel from r_client_customer where cid = #{cid}
+</select>
+
+<!-- [인포 데이터 출력] -->
+<select id="infoList" resultType="folio.port.domain.infoDAO">
+	select * from r_admin_info where fuse = "O" order by foutputOrder asc; 
+</select>
+
+<!-- [회원가입시 아이디 중복체크] -->
+<select id="idcheck" resultType="integer">
+	select count(*) from r_client_customer where cid = #{a}
+</select>
+
+<!-- [아이디 찾기] -->
+<select id="idsearch" resultType="String">
+	select cid from r_client_customer where cname = #{cname} and ctel = #{ctel}
+</select>
+
+<!-- [비번 찾기] -->
+<select id="pwdsearch" resultType="folio.port.domain.customerDAO">
+	select * from r_client_customer where cname = #{cname} and ctel = #{ctel} and cid = #{cid}
+</select>
+
+<!-- [비번 변경] -->
+<update id="pwdupdate">
+	update r_client_customer set cpwd = #{cpwd} where cidx = #{cidx}
+</update>
+</mapper>
