@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	
+
+
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+	<bean id="csrfTokenRepository" class="org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository"/>
+	<bean id="customAuthenticationFailureHandler" class="folio.port.security.CustomAuthenticationFailureHandler" />
+	<bean id="customloginSuccessHandler" class="folio.port.security.CustomLoginSuccessHandler" />
+	<bean id="customUserDetailsService" class="folio.port.security.CustomUserDetailsService"/>
+	
+	<bean id="customUserDetailsService_c" class="folio.port.security.CustomUserDetailsService_c"></bean>
+	
+	
+	
+	<security:http  pattern="/raemian_admin/**" authentication-manager-ref="a">
+		<security:intercept-url pattern="/raemian_admin/ramian_admin_login" access="permitAll"/>
+		
+		<security:intercept-url pattern="/raemian_admin/info/*" access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/raemian_admin/info/info_write/*" access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/raemian_admin/customer/*" access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/raemian_admin/notice/*" access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/raemian_admin/notice/notice_view/*" access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/raemian_admin/faq/*" access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/raemian_admin/reserve/*" access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/raemian_admin/admin/*" access="hasRole('ROLE_ADMIN')"/> 
+		
+		<security:form-login login-page="/raemian_admin/ramian_admin_login"  login-processing-url="/raemian_admin/login" authentication-success-handler-ref="customloginSuccessHandler" authentication-failure-handler-ref="customAuthenticationFailureHandler"/>
+		<security:logout logout-url="/raemian_admin/logoutpage" logout-success-url="/raemian_admin/ramian_admin_login" invalidate-session="true" /> 
+		<security:session-management invalid-session-url="/raemian_admin/ramian_admin_login"> 
+			<security:concurrency-control 
+				max-sessions="1" 
+				error-if-maximum-exceeded="false" 
+				expired-url="/raemian_admin/ramian_admin_login"
+			/> 
+		</security:session-management> 
+		<security:access-denied-handler error-page="/raemian_admin/ramian_admin_login"/>
+
+	</security:http>
+	
+	<security:authentication-manager id="a"> 
+		<security:authentication-provider user-service-ref="customUserDetailsService">
+			<security:password-encoder ref="bcryptPasswordEncoder"/>
+		</security:authentication-provider>
+	</security:authentication-manager>
+	
+	
+	<security:http  pattern="/raemian_client/**" authentication-manager-ref="c">
+		<security:intercept-url pattern="/raemian_client/userlogin" access="permitAll"/>
+		<security:intercept-url pattern="/raemian_client/*" access="permitAll"/>
+		<security:intercept-url pattern="/raemian_client/various/*" access="permitAll"/>
+		
+		<security:intercept-url pattern="/raemian_client/reservation/*" access="hasRole('ROLE_CUSTOMER')"/>
+		<security:form-login login-page="/raemian_client/userlogin"  login-processing-url="/raemian_client/login" authentication-success-handler-ref="customloginSuccessHandler"/>
+		<security:logout logout-url="/raemian_client/logoutpage" logout-success-url="/raemian_client/userlogin" invalidate-session="true" /> 
+	
+		<security:session-management invalid-session-url="/raemian_client/userlogin" > 
+			<security:concurrency-control 
+				max-sessions="1" 
+				error-if-maximum-exceeded="false" 
+				expired-url="/raemian_client/userlogin"
+			/> 
+		</security:session-management> 
+		<security:access-denied-handler error-page="/raemian_client/userlogin"/>
+	
+	</security:http>
+	
+	<security:authentication-manager id="c"> 
+		<security:authentication-provider user-service-ref="customUserDetailsService_c">
+			<security:password-encoder ref="bcryptPasswordEncoder"/>
+		</security:authentication-provider>
+	</security:authentication-manager>
+	
+
+
+</beans>
+
+	
