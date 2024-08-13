@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="folio.port.mapper.LoginMapper">
+
+<!-- [아이디 중복체크] -->
+<select id="idcheck" resultType="integer">
+	select count(*) from r_admin_admin where aid = #{aid}
+</select>
+<!-- [회원가입] -->
+<insert id="insert">
+	insert into r_admin_admin(aidx,assign,ateam,aname,aposition,aid,auth,apwd,aemail,atel,adate,apwdck,approval)
+	values('0',#{assign},#{ateam},#{aname},#{aposition},#{aid},'ROLE_ADMIN',#{apwd},#{aemail},#{atel},now(),'0','Y')
+</insert>
+<!-- [로그인 처리] -->
+<select id="read" resultType="folio.port.domain.adminDAO">
+	select aidx,aid,apwd,aname,auth,approval,apwdck from r_admin_admin where aid=#{aid}
+</select>
+<!-- [비번 틀림 카운팅] -->
+<update id="update_cnt">
+	update r_admin_admin set apwdck = apwdck+1 where aidx=#{a}
+</update>
+<!-- [비번 틀림 카운팅 리셋] -->
+<update id="update_cnt_reset">
+	update r_admin_admin set apwdck = 0 where aidx=#{a}
+</update>
+	
+</mapper>

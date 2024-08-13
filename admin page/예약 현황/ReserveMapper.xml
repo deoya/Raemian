@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="folio.port.mapper.ReserveMapper">
+
+<!-- [리스트 출력] -->
+<select id="getList" resultType="folio.port.domain.reserveDAO">
+	select * from r_client_reserve order by rdate desc
+</select>
+<select id="select_page" resultType="folio.port.domain.reserveDAO">
+	select * from r_client_reserve order by rdate desc limit #{pg},30	
+</select>
+<sql id="search">
+	<where>
+		<if test="search_ch == '아이디'">
+			cid like concat('%',#{search}, '%')
+		</if>
+		<if test="search_ch == '이름'">
+			cname like concat('%',#{search}, '%')
+		</if>
+		<if test="search_ch == '연락처'">
+			ctel like concat('%',#{search}, '%')
+		</if>
+	</where>
+	order by rdate desc
+</sql>
+<select id="select_search" parameterType="java.util.Map"  resultType="folio.port.domain.reserveDAO">
+	select * from r_client_reserve <include refid="search"></include>
+</select>
+<select id="select_search_pg" parameterType="java.util.Map"  resultType="folio.port.domain.reserveDAO">
+	select * from r_client_reserve <include refid="search"></include> limit #{page},30
+</select>
+
+<!-- [예약취소] -->
+<delete id="delete">
+	delete from r_client_reserve where ridx = #{a}
+</delete>
+
+<!-- [예약 유무 체크] -->
+<select id="getdata" resultType="folio.port.domain.reserveDAO">
+	select * from r_client_reserve where cidx=#{a}
+</select>
+
+</mapper>

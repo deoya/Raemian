@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="folio.port.mapper.AdminMapper">
+
+
+<!-- [데이터 출력] -->
+<select id="getcustomer" resultType="folio.port.domain.customerDAO">
+	select cid,cname,ctel,cemail,cadrr_n,cadrr_1,cadrr_2 from r_client_customer order by cdate desc limit 1
+</select>
+<select id="getfaq" resultType="folio.port.domain.faqDAO">
+	select fqtitle,aname,fqdate from r_admin_faq order by fqdate desc limit 1
+</select>
+<select id="getreserve" resultType="folio.port.domain.reserveDAO">
+	select cid,cname,ctel,reservedate,reservetime,rpersonnel  from r_client_reserve order by rdate desc limit 2
+</select>
+
+
+<!-- [관리자 현황 변경] -->
+<update id="appupdate">
+	update r_admin_admin set approval = #{approval} where aidx = #{aidx}
+</update>
+
+
+<!-- [데이터 출력] -->
+<select id="select_page" resultType="folio.port.domain.adminDAO">
+	select * from r_admin_admin order by aidx desc limit #{pg},10	
+</select>
+<select id="getList" resultType="folio.port.domain.adminDAO">
+	select * from r_admin_admin
+</select>
+
+<sql id="search">
+	<where>
+		<if test="search_ch == '아이디'">
+			aid like concat('%',#{search}, '%')
+		</if>
+		<if test="search_ch == '이름'">
+			aname like concat('%',#{search}, '%')
+		</if>
+		<if test="search_ch == '연락처'">
+			atel like concat('%',#{search}, '%')
+		</if>
+	</where>
+</sql>
+
+<!-- 소속을 전체로 하고 검색했을 시 -->
+<select id="select_search" resultType="folio.port.domain.adminDAO">
+	select * from r_admin_admin <include refid="search"/> order by aidx desc
+</select>
+<select id="select_search_pg" parameterType="java.util.Map"  resultType="folio.port.domain.adminDAO">
+	select * from r_admin_admin <include refid="search"/> order by aidx desc limit #{page},10	
+</select>
+
+
+<!-- 소속도 포함해서 검색을 했을 시 -->
+<select id="select_search_assign" resultType="folio.port.domain.adminDAO">
+    select * from r_admin_admin <include refid="search"/> and assign LIKE CONCAT('%', #{search_assign}, '%') order by aidx desc
+</select>
+<select id="select_search_assign_pg" parameterType="java.util.Map"  resultType="folio.port.domain.adminDAO">
+    select * from r_admin_admin <include refid="search"/> and assign LIKE CONCAT('%', #{search_assign}, '%') order by aidx desc limit #{page}, 10
+</select>
+
+
+<!-- 소속만 검색 -->
+<select id="select_assign_pg" parameterType="java.util.Map"  resultType="folio.port.domain.adminDAO">
+	select * from r_admin_admin where assign like concat('%',#{search}, '%') order by aidx desc limit #{page},10	
+</select>
+<select id="select_assignList" resultType="folio.port.domain.adminDAO">
+	select * from r_admin_admin where assign like concat('%',#{search}, '%') order by aidx desc
+</select>
+
+</mapper>

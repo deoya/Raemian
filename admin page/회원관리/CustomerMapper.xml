@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="folio.port.mapper.CustomerMapper">
+
+<!-- [고객 삭제] -->
+<delete id="delete">
+	delete from r_client_customer where cidx = #{a}
+</delete>
+
+<!-- [데이터 출력] -->
+<select id="getList" resultType="folio.port.domain.customerDAO">
+	select * from r_client_customer order by cidx desc
+</select>
+<select id="select_page" resultType="folio.port.domain.customerDAO">
+	select * from r_client_customer order by cidx desc limit #{pg},20	
+</select>
+
+<sql id="search">
+	<where>
+		<if test="search_ch == '아이디'">
+			cid like concat('%',#{search}, '%')
+		</if>
+		<if test="search_ch == '이름'">
+			cname like concat('%',#{search}, '%')
+		</if>
+		<if test="search_ch == '연락처'">
+			ctel like concat('%',#{search}, '%')
+		</if>
+	</where>
+	order by cidx desc
+</sql>
+
+<select id="select_search" parameterType="java.util.Map"  resultType="folio.port.domain.customerDAO">
+	select * from r_client_customer <include refid="search"></include>
+</select>
+<select id="select_search_pg" parameterType="java.util.Map"  resultType="folio.port.domain.customerDAO">
+	select * from r_client_customer <include refid="search"></include> limit #{page},20
+</select>
+
+</mapper>

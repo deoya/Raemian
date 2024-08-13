@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="folio.port.mapper.InfoMapper">
+
+<!-- [설정 등록] -->
+<insert id="insert">
+	insert into r_admin_info (fidx,ftype,aidx,aname,household,houseShared,etcShared,contractArea,fimg,uploadPath,fuse,foutputOrder,fdate)
+	values('0',#{ftype},#{aidx},#{aname},#{household},#{houseShared},#{etcShared},#{contractArea},#{fimg},#{uploadPath},#{fuse},#{foutputOrder},now())
+</insert>
+<!-- 이미지 없이 수정 -->
+<update id="update">
+	update r_admin_info 
+	set ftype = #{ftype},household = #{household},houseShared = #{houseShared},etcShared = #{etcShared},contractArea = #{contractArea},fuse = #{fuse},foutputOrder = #{foutputOrder}, fdate = now()
+	where fidx = #{fidx}
+</update>
+<!-- 이미지 포함 수정 -->
+<update id="imgp_update">
+	update r_admin_info 
+	set ftype = #{ftype},household = #{household},houseShared = #{houseShared},etcShared = #{etcShared},contractArea = #{contractArea},fimg = #{fimg}, uploadPath =#{uploadPath} , fuse = #{fuse},foutputOrder = #{foutputOrder}, fdate = now()
+	where fidx = #{fidx}
+</update>
+<!-- [데이터 출력] -->
+<select id="getList" resultType="folio.port.domain.infoDAO">
+	 select * from r_admin_info order BY foutputOrder desc, fdate desc
+</select>
+<select id="select_page" resultType="folio.port.domain.infoDAO">
+	select * from r_admin_info order by foutputOrder desc, fdate desc limit #{pg},4	
+</select>
+<select id="select_search" resultType="folio.port.domain.infoDAO">
+	select * from r_admin_info where  INSTR( household,  #{a} ) > 0  order by foutputOrder desc, fdate desc
+</select>
+<select id="select_search_pg" parameterType="java.util.Map"  resultType="folio.port.domain.infoDAO">
+	select * from r_admin_info where  INSTR( household,  #{search} ) > 0 order by foutputOrder desc, fdate desc limit #{page},4	
+</select>
+<!-- [사용 유/무 에서 사용함이 4개이상인지 체크] -->
+<select id="usecount" resultType="integer">
+	select count(*) from r_admin_info where fuse = 'O'
+</select>
+<!-- [단일 데이터 보기] -->
+<select id="get" resultType="folio.port.domain.infoDAO">
+	select * from r_admin_info where fidx=#{fidx}
+</select>
+
+<!-- [설정 삭제] -->
+<delete id="delete">
+	delete from r_admin_info where fidx = #{a}
+</delete>
+
+</mapper>
